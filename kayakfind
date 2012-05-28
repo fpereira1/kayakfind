@@ -40,6 +40,8 @@ fi
 # Call kayak to find the flights needed
 curl -s -o $temp_file "https://www.kayak.com/h/rss/fare?code=$DEPARTURE&tm$TRAVEL_MONTH&dest=$DESTINATION&mc=$CURRENCY"
 
+# Save this request into the log
+echo `date` - $@ - `getBestPrice;` >> $log_file
 
 # Display the result
 cat <<-EOF
