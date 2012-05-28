@@ -1,22 +1,27 @@
 #!/bin/bash
-
 # kayakfind - A script to find flights on kayak.com using their RSS
-
-VERSION=0.0.1
-
-DEPARTURE=AKL
-DESTINATION=LON,ROM,AMS,PAR,MAD,FRA,DUB
-TRAVEL_MONTH=201206
+# Kayakfind constants
 CURRENCY=NZD
 
-XPATH_SH=./lib/xpath
+# Configurations for the shell script
+version=0.0.1
+temp_file=temp.xml
+log_file=./logs/history.log
+xpath_sh=./lib/xpath
+
+getHelp() {
+cat <<-EOF
+usage:	kayakfind [departure] [destination]
+		kayakfind akl syd,mel
+EOF
+}
 
 getBestPrice() {
-  $XPATH_SH temp.xml "//kyk:price/text()" | head -n 1
+  echo "\$$CURRENCY `$xpath_sh $temp_file "//kyk:price/text()" | head -n 1`"
 }
 
 getPriceList() {
-   $XPATH_SH temp.xml  "//item/title/text()"
+   $xpath_sh $temp_file "//item/title/text()"
 }
 
 if [ "$1" != "" ]; then
@@ -28,23 +33,20 @@ if [ "$2" != "" ]; then
 fi
 
 if [ "$#" -lt 2 ]; then
-cat <<-EOF
-usage: kayakfind [departure] [destination]
-example: kayakfind akl syd
-EOF
+getHelp;
 exit
 fi
 
 # Call kayak to find the flights needed
-curl -s -o temp.xml "https://www.kayak.com/h/rss/fare?code=$DEPARTURE&tm$TRAVEL_MONTH&dest=$DESTINATION&mc=$CURRENCY"
+curl -s -o $temp_file "https://www.kayak.com/h/rss/fare?code=$DEPARTURE&tm$TRAVEL_MONTH&dest=$DESTINATION&mc=$CURRENCY"
 
+
+# Display the result
 cat <<-EOF
-kayakfind - $VERSION
-Looking for flights from $DEPARTURE to $DESTINATION in $CURRENCY
+kayakfind - $version
+Searching for flights from $DEPARTURE to $DESTINATION in $CURRENCY
 
-The best price is $CURRENCY\$ `getBestPrice;`
+The best price is `getBestPrice;`
 
-`getPriceList`
-
+`getPriceList;`
 EOF
-
