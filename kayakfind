@@ -8,7 +8,7 @@ CURRENCY=NZD
 version=0.0.1
 temp_file=temp.xml
 log_file=./logs/history.log
-xpath_sh=./lib/xpathPHP
+xpath_sh=./libs/xpathPHP/xpathPHP
 
 getHelp() {
 cat <<-EOF

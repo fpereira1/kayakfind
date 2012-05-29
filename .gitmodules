@@ -1,0 +1,3 @@
+[submodule "libs/xpathPHP"]
+	path = libs/xpathPHP
+	url = https://github.com/fpereira1/xpathPHP.git
