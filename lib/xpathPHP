@@ -1,6 +1,15 @@
 #!/usr/bin/php
-
 <?php
 
-echo "This is my php script";
 
+list($file, $xpath) = array_slice($argv, 1, 3);
+
+$dom = new DOMDocument();
+$dom->load($file);
+
+$domx = new DOMXPath($dom);
+$entries = $domx->query($xpath);
+
+foreach($entries as $entry) {
+	printf($entry->wholeText . "\n");
+}
