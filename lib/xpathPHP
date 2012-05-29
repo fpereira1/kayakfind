@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 
-
 list($file, $xpath) = array_slice($argv, 1, 3);
 
 $dom = new DOMDocument();
@@ -11,5 +10,19 @@ $domx = new DOMXPath($dom);
 $entries = $domx->query($xpath);
 
 foreach($entries as $entry) {
-	printf($entry->wholeText . "\n");
+	
+	switch(true) {
+		case ($entry instanceof DOMText): {
+			$text = 'wholeText';
+		}
+		break;
+		case ($entry instanceof DOMNode): {
+			$text = 'nodeValue';
+		}
+		break;
+	}
+
+	print($entry->$text . PHP_EOL );	
+
 }
+
