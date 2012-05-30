@@ -25,9 +25,10 @@ CURRENCY=NZD
 
 # Configurations for the shell script
 version=0.0.1
-temp_file=temp.xml
-log_file=./logs/history.log
-xpath_sh=./libs/xpathPHP/xpathPHP
+app_name=$(basename "$0")
+file_tmp=$(mktemp -t kayakfind)
+file_log=logs/history.log
+xpath_sh=libs/xpathPHP/xpathPHP
 
 getHelp() {
 cat <<-EOF
@@ -37,11 +38,11 @@ EOF
 }
 
 getBestPrice() {
-  echo "\$$CURRENCY `$xpath_sh $temp_file "//kyk:price/text()" | head -n 1`"
+  echo "\$$CURRENCY `$xpath_sh $file_tmp "//kyk:price/text()" | head -n 1`"
 }
 
 getPriceList() {
-   $xpath_sh $temp_file "//item/title/text()"
+   $xpath_sh $file_tmp "//item/title/text()"
 }
 
 if [ "$1" != "" ]; then
@@ -58,10 +59,10 @@ exit
 fi
 
 # Call kayak to find the flights needed
-curl -s -o $temp_file "https://www.kayak.com/h/rss/fare?code=$DEPARTURE&tm$TRAVEL_MONTH&dest=$DESTINATION&mc=$CURRENCY"
+curl -s -o $file_tmp "https://www.kayak.com/h/rss/fare?code=$DEPARTURE&tm=$TRAVEL_MONTH&dest=$DESTINATION&mc=$CURRENCY"
 
 # Save this request into the log
-echo `date` - $@ - `getBestPrice;` >> $log_file
+echo `date` - $@ - `getBestPrice;` >> $file_log
 
 # Display the result
 cat <<-EOF
@@ -72,3 +73,6 @@ The best price is `getBestPrice;`
 
 `getPriceList;`
 EOF
+
+# Remove temp file at the exit using trap
+trap 'rm -f "$file_tmp"' EXIT
