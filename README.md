@@ -3,6 +3,18 @@ kayakfind
 
 A command line tool to find flights on kayak.com using available RSS
 
+Usage:
+
+```
+kayakfind [departure] [destination]
+```
+
+example:
+
+```
+kayakfind akl syd,mel
+```
+
 ChangeLog
 ========
 
